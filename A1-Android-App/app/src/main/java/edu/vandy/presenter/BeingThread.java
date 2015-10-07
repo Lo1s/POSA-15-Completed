@@ -1,5 +1,7 @@
 package edu.vandy.presenter;
 
+import android.util.Log;
+
 /**
  * This class implements a BeingThread, which provides various methods
  * for interrupting and shutting down a Java Thread.
@@ -54,11 +56,11 @@ public class BeingThread
      * Shutdown the BeingThread.
      */
     public static void shutdown() {
-        /*
+
         Log.d(TAG,
-              "BeingThread.shutdown() called from Thread "
-              + Thread.currentThread().getId());
-        */
+                "BeingThread.shutdown() called from Thread "
+                        + Thread.currentThread().getId());
+
         mShutdown = true;
         // super.interrupt();
     }

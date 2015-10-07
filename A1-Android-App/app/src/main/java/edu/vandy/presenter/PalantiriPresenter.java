@@ -99,6 +99,8 @@ public class PalantiriPresenter
     public PalantiriPresenter() {
     }
 
+    private boolean loadingBeings = false;
+
     /**
      * Hook method called when a new instance of PalantiriPresenter is
      * created.  One time initialization code goes here, e.g., storing
@@ -268,6 +270,15 @@ public class PalantiriPresenter
         // perform the BeingRunnable logic, add them to the ArrayList,
         // and then start all the Threads in the ArrayList.
         // TODO - You fill in here.
+        loadingBeings = true;
+        Log.i("Loading", "started !");
+        ArrayList<BeingThread> beingThreads =  new ArrayList<>(beingCount);
+        for (int i = 0; i < beingCount; i++) {
+            BeingRunnable runnable = new BeingRunnable(i, this);
+            beingThreads.add(new BeingThread(runnable, beingCount, this));
+            beingThreads.get(i).start();
+        }
+        loadingBeings = false;
     }
 
     /**
@@ -279,6 +290,21 @@ public class PalantiriPresenter
         // finish and then calls mView.get().done() to inform the View
         // layer that the simulation is done.
         // @@ TODO -- you fill in here.
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (!loadingBeings) {
+                        mView.get().done();
+                        Log.i("Loading", "finished !");
+                    } else {
+                        wait();
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     /**
