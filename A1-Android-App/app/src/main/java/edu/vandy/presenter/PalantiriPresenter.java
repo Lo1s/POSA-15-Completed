@@ -1,12 +1,17 @@
 package edu.vandy.presenter;
 
 import java.lang.ref.WeakReference;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
+
 import edu.vandy.MVP;
 import edu.vandy.common.GenericModel;
 import edu.vandy.common.Utils;
@@ -20,7 +25,7 @@ import edu.vandy.view.DotArrayAdapter.DotColor;
  * provided a reference to MVP.RequiredViewOps, which is used to
  * manipulate the UI.  The Options singleton contains the number of
  * beings to simulate and the number of palantiri to simulate.
- * 
+ * <p/>
  * The simulation should run as follows: the correct number of
  * palantiri should be instantiated and added to the LeasePool in the
  * Model layer.  A Java thread should be created for each Being.  Each
@@ -29,7 +34,7 @@ import edu.vandy.view.DotArrayAdapter.DotColor;
  * is happening, Being threads should call the appropriate methods in
  * MVP.RequiredViewOps to demonstrate which palantiri are being used
  * and which Beings currently own a palantir.
- *
+ * <p/>
  * This class plays the "Presenter" role in the Model-View-Presenter
  * (MVP) pattern by acting upon the Model and the View, i.e., it
  * retrieves data from the Model (e.g., PalantiriModel) and formats it
@@ -38,17 +43,17 @@ import edu.vandy.view.DotArrayAdapter.DotColor;
  * MVP.RequiredModelOps so it can be created/managed by the
  * GenericModel framework.
  */
-public class PalantiriPresenter 
-       extends GenericModel<MVP.RequiredPresenterOps,
-                            MVP.ProvidedModelOps,
-                            PalantiriModel>
-       implements MVP.ProvidedPresenterOps, 
-                  MVP.RequiredPresenterOps {
+public class PalantiriPresenter
+        extends GenericModel<MVP.RequiredPresenterOps,
+        MVP.ProvidedModelOps,
+        PalantiriModel>
+        implements MVP.ProvidedPresenterOps,
+        MVP.RequiredPresenterOps {
     /**
      * Used for Android debugging.
      */
-    private final static String TAG = 
-        PalantiriPresenter.class.getName();
+    private final static String TAG =
+            PalantiriPresenter.class.getName();
 
     /**
      * Keeps track of whether a runtime configuration change ever
@@ -83,14 +88,14 @@ public class PalantiriPresenter
      * they're in use or not.
      */
     private List<DotColor> mPalantiriColors =
-        new ArrayList<>();
-	
+            new ArrayList<>();
+
     /**
      * This List keeps track of how many beings we have and whether
      * they're gazing or not.
      */
     private List<DotColor> mBeingsColors =
-        new ArrayList<>();
+            new ArrayList<>();
 
     /**
      * Default constructor that's needed by the GenericActivity
@@ -99,38 +104,37 @@ public class PalantiriPresenter
     public PalantiriPresenter() {
     }
 
-    private boolean loadingBeings = false;
+    public static final String DEBUG_TAG = "debug";
 
     /**
      * Hook method called when a new instance of PalantiriPresenter is
      * created.  One time initialization code goes here, e.g., storing
      * a WeakReference to the View layer and initializing the Model
      * layer.
-     * 
-     * @param view
-     *            A reference to the View layer.
+     *
+     * @param view A reference to the View layer.
      */
     @Override
     public void onCreate(MVP.RequiredViewOps view) {
         // Set the WeakReference.
         mView =
-            new WeakReference<>(view);
+                new WeakReference<>(view);
 
         // Invoke the special onCreate() method in GenericModel,
         // passing in the PalantiriModel class to instantiate/manage
         // and "this" to provide this MVP.RequiredModelOps instance.
         super.onCreate(PalantiriModel.class,
-                       this);
+                this);
 
         // Get the intent used to start the Activity.
         final Intent intent = view.getIntent();
 
         // Initialize the Options singleton using the extras contained
         // in the intent.
-        if (Options.instance().parseArgs(view.getActivityContext(), 
-                                         makeArgv(intent)) == false)
+        if (Options.instance().parseArgs(view.getActivityContext(),
+                makeArgv(intent)) == false)
             Utils.showToast(view.getActivityContext(),
-                            "Arguments were incorrect");
+                    "Arguments were incorrect");
 
         // A runtime configuration change has not yet occurred.
         mConfigurationChangeOccurred = false;
@@ -141,17 +145,16 @@ public class PalantiriPresenter
      * initialize the PalantiriPresenter object after it's been
      * created.
      *
-     * @param view         
-     *          The currently active MVP.RequiredViewOps.
+     * @param view The currently active MVP.RequiredViewOps.
      */
     @Override
     public void onConfigurationChange(MVP.RequiredViewOps view) {
         Log.d(TAG,
-              "onConfigurationChange() called");
+                "onConfigurationChange() called");
 
         // Reset the WeakReference.
         mView =
-            new WeakReference<>(view);
+                new WeakReference<>(view);
 
         // A runtime configuration change occurred.
         mConfigurationChangeOccurred = true;
@@ -160,8 +163,7 @@ public class PalantiriPresenter
     /**
      * Hook method called to shutdown the Model layer.
      *
-     * @param isChangeConfigurations
-     *        True if a runtime configuration triggered the onDestroy() call.
+     * @param isChangeConfigurations True if a runtime configuration triggered the onDestroy() call.
      */
     @Override
     public void onDestroy(boolean isChangingConfigurations) {
@@ -186,12 +188,12 @@ public class PalantiriPresenter
         // Create the list of arguments to pass to the Options
         // singleton.
         String argv[] = {
-            "-b", // Number of Being threads.
-            intent.getStringExtra("BEINGS"),
-            "-p", // Number of Palantiri.
-            intent.getStringExtra("PALANTIRI"),
-            "-i", // Gazing iterations.
-            intent.getStringExtra("GAZING_ITERATIONS"),
+                "-b", // Number of Being threads.
+                intent.getStringExtra("BEINGS"),
+                "-p", // Number of Palantiri.
+                intent.getStringExtra("PALANTIRI"),
+                "-i", // Gazing iterations.
+                intent.getStringExtra("GAZING_ITERATIONS"),
         };
         return argv;
     }
@@ -261,30 +263,29 @@ public class PalantiriPresenter
      * Create/start a List of BeingThreads that represent the Beings
      * in this simulation.  Each Thread is passed a BeingRunnable
      * parameter that performs the Being gazing logic.
-     * 
-     * @param beingCount
-     *            Number of Being Threads to create.
+     *
+     * @param beingCount Number of Being Threads to create.
      */
     private void beginBeingsThreads(int beingCount) {
         // Create an empty ArrayList, create new BeingThreads that
         // perform the BeingRunnable logic, add them to the ArrayList,
         // and then start all the Threads in the ArrayList.
         // TODO - You fill in here.
-        loadingBeings = true;
         Log.i("Loading", "started !");
-        ArrayList<BeingThread> beingThreads =  new ArrayList<>(beingCount);
+        mBeingsThreads = new ArrayList<>(beingCount);
         for (int i = 0; i < beingCount; i++) {
-            BeingRunnable runnable = new BeingRunnable(i, this);
-            beingThreads.add(new BeingThread(runnable, beingCount, this));
-            beingThreads.get(i).start();
+            mBeingsThreads.add(new BeingThread(new BeingRunnable(i, this), i, this));
+            mBeingsThreads.get(i).start();
+            Log.i(DEBUG_TAG, mBeingsThreads.get(i).getName() + " started");
+
         }
-        loadingBeings = false;
     }
 
     /**
      * Start a thread to wait for all the Being threads to finish and
      * then inform the View layer that the simulation is done.
      */
+    public static Lock lock = new ReentrantLock(true);
     private void waitForBeingsThreads() {
         // Start a Java Thread that waits for all the BeingThreads to
         // finish and then calls mView.get().done() to inform the View
@@ -293,16 +294,18 @@ public class PalantiriPresenter
         new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (!loadingBeings) {
-                        mView.get().done();
-                        Log.i("Loading", "finished !");
-                    } else {
-                        wait();
+                for (BeingThread thread :
+                        mBeingsThreads) {
+                    try {
+                        thread.join();
+                        Log.i(DEBUG_TAG, "Joining " + thread.getName());
+                    } catch (InterruptedException e) {
+                        Log.d(DEBUG_TAG, "Wiating thread interrupted");
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
+                // simulation is done as soon as every beingThread is done
+                mView.get().done();
             }
         }).start();
     }
@@ -314,7 +317,7 @@ public class PalantiriPresenter
      */
     @Override
     public void shutdown() {
-        synchronized(this) {
+        synchronized (this) {
             // Shutdown all the BeingThreads.
             BeingThread.shutdown();
 

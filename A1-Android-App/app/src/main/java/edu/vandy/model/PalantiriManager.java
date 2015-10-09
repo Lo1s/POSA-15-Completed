@@ -1,9 +1,13 @@
 package edu.vandy.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+
+import edu.vandy.presenter.PalantiriPresenter;
 
 /**
  * Defines a mechanism that mediates concurrent access to a fixed
@@ -16,8 +20,8 @@ public class PalantiriManager {
     /**
      * Debugging tag used by the Android logger.
      */
-    protected final static String TAG = 
-        PalantiriManager.class.getSimpleName();
+    protected final static String TAG =
+            PalantiriManager.class.getSimpleName();
 
     /**
      * A counting Semaphore that limits concurrent access to the fixed
@@ -30,6 +34,8 @@ public class PalantiriManager {
      * values that keep track of whether the key is available.
      */
     protected HashMap<Palantir, Boolean> mPalantiriMap;
+    private ArrayList<Palantir> keySet;
+    private ArrayList<Boolean> valueSet;
 
     /**
      * Constructor creates a PalantiriManager for the List of @a
@@ -45,7 +51,11 @@ public class PalantiriManager {
         mPalantiriMap = new HashMap<>(palantiri.size());
         for (int i = 0; i < palantiri.size(); i++) {
             mPalantiriMap.put(palantiri.get(i), true);
+            Log.d(PalantiriPresenter.DEBUG_TAG, "Palantir #" + palantiri.get(i).getId() +
+                    " is available");
         }
+        keySet = new ArrayList<>(mPalantiriMap.keySet());
+        valueSet = new ArrayList<>(mPalantiriMap.values());
         mAvailablePalantiri = new Semaphore(palantiri.size(), true);
     }
 
@@ -62,17 +72,32 @@ public class PalantiriManager {
         // available and then return that palantir to the client.  @@
         // TODO -- you fill in here.
         mAvailablePalantiri.acquireUninterruptibly();
-        // Check if the position of entry set is equal to the position in hashmap
-        ArrayList<Palantir> palantirs = (ArrayList) mPalantiriMap.keySet();
-        for (int i = 0; i < mPalantiriMap.size(); i++) {
-            synchronized (this) {
-                if (mPalantiriMap.containsValue(true)) {
-                    mPalantiriMap.put(palantirs.get(i), false);
+        Log.d(PalantiriPresenter.DEBUG_TAG, "Permits #" + mAvailablePalantiri.availablePermits());
+        return getAvailablePalantir();
+    }
+
+    private synchronized Palantir getAvailablePalantir() {
+        for (int i = 0; i < valueSet.size(); i++) {
+            if (valueSet.get(i)) {
+                valueSet.set(i, false);
+                return keySet.get(i);
+            }
+        }
+        return null;
+    }
+
+    private synchronized boolean markUnused(final Palantir palantir) {
+        for (int i = 0; i < valueSet.size(); i++) {
+            if (palantir == keySet.get(i)) {
+                if (!valueSet.get(i)) {
+                    valueSet.set(i, true);
+                    return true;
+                } else {
+                    return false;
                 }
             }
         }
-
-        return null; 
+        return false;
     }
 
     /**
@@ -84,6 +109,14 @@ public class PalantiriManager {
         // in a thread-safe manner and release the Semaphore if all
         // works properly.
         // TODO -- you fill in here.
+        if (markUnused(palantir)) {
+            mAvailablePalantiri.release();
+        }
+        Log.d(PalantiriPresenter.DEBUG_TAG, "Palantir #" + palantir.getId() +
+                " is available");
+        Log.d(PalantiriPresenter.DEBUG_TAG, "Permits #" +
+                mAvailablePalantiri.availablePermits());
+
     }
 
     /*
