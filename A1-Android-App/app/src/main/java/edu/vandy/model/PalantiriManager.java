@@ -80,24 +80,11 @@ public class PalantiriManager {
         for (int i = 0; i < valueSet.size(); i++) {
             if (valueSet.get(i)) {
                 valueSet.set(i, false);
+                mPalantiriMap.put(keySet.get(i), false);
                 return keySet.get(i);
             }
         }
         return null;
-    }
-
-    private synchronized boolean markUnused(final Palantir palantir) {
-        for (int i = 0; i < valueSet.size(); i++) {
-            if (palantir == keySet.get(i)) {
-                if (!valueSet.get(i)) {
-                    valueSet.set(i, true);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -117,6 +104,21 @@ public class PalantiriManager {
         Log.d(PalantiriPresenter.DEBUG_TAG, "Permits #" +
                 mAvailablePalantiri.availablePermits());
 
+    }
+
+    private synchronized boolean markUnused(final Palantir palantir) {
+        for (int i = 0; i < valueSet.size(); i++) {
+            if (palantir == keySet.get(i)) {
+                if (!valueSet.get(i)) {
+                    valueSet.set(i, true);
+                    mPalantiriMap.put(palantir, true);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 
     /*

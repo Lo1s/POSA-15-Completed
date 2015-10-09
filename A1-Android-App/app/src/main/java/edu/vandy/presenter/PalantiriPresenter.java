@@ -1,16 +1,13 @@
 package edu.vandy.presenter;
 
+import android.content.Intent;
+import android.util.Log;
+import android.view.View;
+
 import java.lang.ref.WeakReference;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
-import android.content.Intent;
-import android.util.Log;
-import android.widget.Toast;
 
 import edu.vandy.MVP;
 import edu.vandy.common.GenericModel;
@@ -285,7 +282,6 @@ public class PalantiriPresenter
      * Start a thread to wait for all the Being threads to finish and
      * then inform the View layer that the simulation is done.
      */
-    public static Lock lock = new ReentrantLock(true);
     private void waitForBeingsThreads() {
         // Start a Java Thread that waits for all the BeingThreads to
         // finish and then calls mView.get().done() to inform the View
