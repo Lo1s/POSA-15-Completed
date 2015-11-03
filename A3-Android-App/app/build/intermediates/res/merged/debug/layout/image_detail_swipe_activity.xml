@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="4dip"
+    android:gravity="center_horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    	<android.support.v4.view.ViewPager
+    	xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:id="@+id/pager"
+    	android:layout_width="match_parent"
+    	android:layout_height="0px"
+    	android:layout_weight="1" />
+</LinearLayout>
+<!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15/assignments_as/assignment3/app/src/main/res/layout/image_detail_swipe_activity.xml -->
