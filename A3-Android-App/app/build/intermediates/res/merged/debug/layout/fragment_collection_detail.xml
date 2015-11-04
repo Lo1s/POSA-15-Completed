@@ -6,4 +6,4 @@
 	android:scaleType="fitCenter" 
 	android:contentDescription="@string/detailed_picture_view_desc_string">
 	
-</ImageView><!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15/assignments_as/assignment3/app/src/main/res/layout/fragment_collection_detail.xml -->
+</ImageView><!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15-Completed/A3-Android-App/app/src/main/res/layout/fragment_collection_detail.xml -->

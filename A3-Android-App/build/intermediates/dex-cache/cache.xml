@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\jslapnicka\AndroidStudioProjects\POSA-15-Completed\A3-Android-App\app\libs\android-support-v13.jar"
+        jumboMode="false"
+        revision="23.0.1"
+        sha1="94c00ce88ca3ba7e8d94f1d9b7a7522343712c41">
+        <dex dex="C:\Users\jslapnicka\AndroidStudioProjects\POSA-15-Completed\A3-Android-App\app\build\intermediates\pre-dexed\debug\android-support-v13-e17f3954395f8c8fe5e0888b9f42250bc4469e9c.jar" />
+    </item>
+
+</items>

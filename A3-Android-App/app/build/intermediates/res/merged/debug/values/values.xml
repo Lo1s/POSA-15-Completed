@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15/assignments_as/assignment3/app/src/main/res/values/colors.xml -->
+    <!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15-Completed/A3-Android-App/app/src/main/res/values/colors.xml -->
     <eat-comment/>
     <integer-array name="androidcolors">
             <item>@color/blue</item>
@@ -33,11 +33,11 @@
     <color name="theme_primary">#127ef8</color>
     <declare-styleable name="AppTheme"><attr format="reference" name="textAppearanceFinish"/></declare-styleable>
     <declare-styleable name="FabView"><attr format="reference" name="fabDrawable"/><attr format="reference" name="fabColor"/><attr format="integer" name="fabMarginLeft"/><attr format="integer" name="fabMarginTop"/><attr format="integer" name="fabMarginRight"/><attr format="integer" name="fabMarginBottom"/></declare-styleable>
-    <!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15/assignments_as/assignment3/app/src/main/res/values/dimens.xml -->
+    <!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15-Completed/A3-Android-App/app/src/main/res/values/dimens.xml -->
     <eat-comment/>
     <dimen name="button_padding">5dp</dimen>
     <dimen name="tablerow_padding">30dp</dimen>
-    <!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15/assignments_as/assignment3/app/src/main/res/values/strings.xml -->
+    <!-- From: file:/C:/Users/jslapnicka/AndroidStudioProjects/POSA-15-Completed/A3-Android-App/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="add_url">Add URL</string>
     <string name="app_name">DownloadImagesViewer</string>

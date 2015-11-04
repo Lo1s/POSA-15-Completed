@@ -7,13 +7,19 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import vandy.mooc.MVP;
+import vandy.mooc.common.BitmapUtils;
+import vandy.mooc.common.GenericAsyncTask;
+import vandy.mooc.common.GenericAsyncTaskOps;
 import vandy.mooc.common.GenericPresenter;
 import vandy.mooc.common.Utils;
 import vandy.mooc.model.ImageDownloadsModel;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+
+import javax.crypto.spec.OAEPParameterSpec;
 
 /**
  * This class defines all the image-related operations.  It implements
@@ -197,6 +203,24 @@ public class ImagePresenter
             // executeOnExecutor().
 
             // TODO -- you fill in here.
+            for (int i = 0; i < mNumImagesToHandle; i++) {
+                new MyAsyncTask().execute(mUrlList.get(i));
+            }
+
+        }
+    }
+
+    private class MyAsyncTask extends AsyncTask<Uri, Void, Uri> {
+        @Override
+        protected Uri doInBackground(Uri... params) {
+            return getModel().downloadImage(getActivityContext(), params[0],
+                    Uri.fromFile(new File("/sdcard")));
+        }
+
+        @Override
+        protected void onPostExecute(Uri uri) {
+            mView.get().displayResults(BitmapUtils.grayScaleFilter(getActivityContext(), uri,
+                    Uri.fromFile(new File("/sdcard"))));
         }
     }
 

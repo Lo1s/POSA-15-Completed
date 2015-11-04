@@ -1,10 +1,5 @@
 package vandy.mooc.view;
 
-import vandy.mooc.MVP;
-import vandy.mooc.R;
-import vandy.mooc.common.GenericActivity;
-import vandy.mooc.common.Utils;
-import vandy.mooc.presenter.ImagePresenter;
 import android.app.ActionBar.LayoutParams;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,6 +12,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import vandy.mooc.MVP;
+import vandy.mooc.R;
+import vandy.mooc.common.GenericActivity;
+import vandy.mooc.common.Utils;
+import vandy.mooc.presenter.ImagePresenter;
 
 /**
  * This Activity prompts the user for URLs of images to download
